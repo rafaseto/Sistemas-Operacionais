@@ -10,6 +10,9 @@ public class Main {
 
         Processo e = new Processo(3);
         Processo f = new Processo(1);
+        Processo g = new Processo(10);
+        Processo h = new Processo(6);
+        Processo i = new Processo(5);
 
         gerenciador.exibeListaEncadeada();
 
@@ -31,6 +34,18 @@ public class Main {
         gerenciador.exibeListaEncadeada();
 
         gerenciador.alocaProcesso(f);
+
+        gerenciador.exibeListaEncadeada();
+
+        gerenciador.alocaProcesso(g);
+
+        gerenciador.exibeListaEncadeada();
+
+        gerenciador.alocaProcesso(h);
+
+        gerenciador.exibeListaEncadeada();
+
+        gerenciador.alocaProcesso(i);
 
         gerenciador.exibeListaEncadeada();
     }

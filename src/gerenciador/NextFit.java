@@ -7,14 +7,14 @@ public class NextFit {
     private int tamanhoMemoria;
     private int comprimentoMemoria;
     LinkedList<SegmentoMemoria> listaEncadeada;
-    int indiceLivre;    // posição que se encontra um espaço livre
+    int ultimoIndiceAloc;    // posição que se encontra a última aloc.
 
     public NextFit(int tamanhoUnidadeAlocacao, int tamanhoMemoria) {
         this.tamanhoUnidadeAlocacao = tamanhoUnidadeAlocacao;
         this.tamanhoMemoria = tamanhoMemoria;
         this.comprimentoMemoria = tamanhoMemoria / tamanhoUnidadeAlocacao;
         this.listaEncadeada = new LinkedList<>();
-        this.indiceLivre = -1;
+        this.ultimoIndiceAloc = -1;
 
         // Criando o primeiro seg. de mem.
         listaEncadeada.add(new SegmentoMemoria(false, 0, comprimentoMemoria));
@@ -47,34 +47,41 @@ public class NextFit {
         processo.setSegmento(segmento);     // 'segmento' é atribuído ao processo
         int comprimento = segmento.getComprimento();    // comprimento do segmento
 
-        int indiceAloc = -1;     // representa a posição inicial onde iremos alocar o processo
-
-        // Buscando um segmento de memória para a alocação
-        for (int i = indiceLivre + 1; i < listaEncadeada.size(); i++) {
-            // Se o comprimento do seg. for >= ao tamanho exigido pelo processo, o seg. é escolhido
-            if (
-                    !listaEncadeada.get(i).isOcupado()
-                    && listaEncadeada.get(i).getComprimento() >= comprimento
-            ) {
-                indiceAloc = i;
-
-                // Próximo índice livre será depois desse segmento
-                indiceLivre = indiceAloc + comprimento;
-
-                // Verificando se passamos do tamanho da lista
-                if (indiceLivre >= listaEncadeada.size()) {
-                    indiceLivre = 0;    // retornamos pro início da lista
-                }
-                break;
-            }
-        }
+        int indiceAloc = buscaSegmento(segmento.getComprimento());
 
         if (indiceAloc == -1) {
             System.out.println("Não existe memória suficiente para alocar este processo de comprimento " + processo.getComprimento());
             System.out.println("\n");
         } else {
             atualizaLista(indiceAloc, segmento);
+
+            // Atualizando o último índice alocado
+            ultimoIndiceAloc = indiceAloc;
         }
+    }
+
+    public int buscaSegmento(int comprimento) {
+        // Buscando um segmento de memória para a alocação a partir do ponto que tínhamos parado
+        for (int i = ultimoIndiceAloc + 1; i < listaEncadeada.size(); i++) {
+            // Se o comprimento do seg. for >= ao tamanho exigido pelo processo, o seg. é escolhido
+            if (
+                    !listaEncadeada.get(i).isOcupado()
+                            && listaEncadeada.get(i).getComprimento() >= comprimento
+            ) {
+                return i;
+            }
+        }
+
+        // Buscando do início caso não tenha encontrado depois do 'ultimoIndiceAloc'
+        for (int i = 0; i <= ultimoIndiceAloc; i++ ) {
+            if (
+                    !listaEncadeada.get(i).isOcupado()
+                            && listaEncadeada.get(i).getComprimento() >= comprimento
+            ) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     //Toda vez que um segmento é inserido na lista, o índice dos segmentos armazenados na lista precisa ser atualizada
@@ -140,5 +147,58 @@ public class NextFit {
         }
 
         System.out.println("\n\n");
+    }
+
+    public static void main(String[] args) {
+        //Gerenciador configurado para uma memória de 62KB e dividida em unidades de alocação de 2KB
+        NextFit gerenciador = new NextFit(2, 62);
+
+        //cria um processo que precisa de um segmento de memória com um comprimento maior ou igual a 10 para ser executado
+        Processo d = new Processo(10);
+
+        Processo e = new Processo(3);
+        Processo f = new Processo(1);
+        Processo g = new Processo(10);
+        Processo h = new Processo(6);
+        Processo i = new Processo(5);
+
+        gerenciador.exibeListaEncadeada();
+
+        gerenciador.alocaProcesso(d);
+
+        gerenciador.exibeListaEncadeada();
+
+        gerenciador.alocaProcesso(e);
+
+        gerenciador.exibeListaEncadeada();
+
+        gerenciador.alocaProcesso(f);
+
+        gerenciador.exibeListaEncadeada();
+
+        //Processo finalizado
+        e.setOnExecution(false);
+
+        gerenciador.exibeListaEncadeada();
+
+        gerenciador.alocaProcesso(f);
+
+        gerenciador.exibeListaEncadeada();
+
+        d.setOnExecution(false);
+
+        gerenciador.exibeListaEncadeada();
+
+        gerenciador.alocaProcesso(g);
+
+        gerenciador.exibeListaEncadeada();
+
+        gerenciador.alocaProcesso(h);
+
+        gerenciador.exibeListaEncadeada();
+
+        gerenciador.alocaProcesso(i);
+
+        gerenciador.exibeListaEncadeada();
     }
 }
