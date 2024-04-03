@@ -141,6 +141,8 @@ public class WorstFit {
     }
 
     public void exibeListaEncadeada() {
+        // Agregando os segmentos vazios antes de exibir a lista
+        agregaSegmentosVazios();
 
         System.out.println("-------- Segmentos de Memória -------- \n");
 

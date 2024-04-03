@@ -123,6 +123,20 @@ public class NextFit {
         }
     }
 
+    // Lembrem que é necessário agrupar os segmentos vazios que estão próximos
+    public void agregaSegmentosVazios() {
+        for (int i = 0; i < listaEncadeada.size() - 1; i++) {
+            SegmentoMemoria seg1 = listaEncadeada.get(i);
+            SegmentoMemoria seg2 = listaEncadeada.get(i + 1);
+
+            if (!seg1.isOcupado() && !seg2.isOcupado()) {
+                seg1.setComprimento(seg1.getComprimento() + seg2.getComprimento());
+                listaEncadeada.remove(i + 1);
+                i--;
+            }
+        }
+    }
+
     public void exibeSegmentosMemoria() {
 
         System.out.println("-------- Segmentos de Memória -------- \n");
@@ -135,6 +149,8 @@ public class NextFit {
     }
 
     public void exibeListaEncadeada() {
+        // Agregando segmentos vazios antes de exibir a lista
+        agregaSegmentosVazios();
 
         System.out.println("-------- Segmentos de Memória -------- \n");
 
